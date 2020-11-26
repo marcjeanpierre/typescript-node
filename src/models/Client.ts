@@ -3,6 +3,7 @@ import Personne from './Personne';
 
 import EmailException from '../exception/EmailException';
 import PasswordException from '../exception/PasswordException';
+import { jointureInterface } from '../db/MySQL';
 
 export default class Client extends Personne {
 
@@ -10,41 +11,62 @@ export default class Client extends Personne {
     password: string = '';
     personne_idpersonne: number | null | undefined;
 
-    constructor(id: number | Personne, email: string = '', password: string = '') {
-        super(id);
-        if (EmailException.checkEmail(email))
-            throw new EmailException()
-        if (!PasswordException.isValidPassword(password))
-            throw new PasswordException()
-        this.email = email;
-        // PasswordException.hashPassword(password).then(pass => {
-        //     this.password = pass;
-        // });
-        this.password = password;
+    protected table: string = 'client';
 
-        // const personne = < Personne > id;
-        // this.personne_idpersonne = < number > personne.pk();
+    constructor(id: Personne, email: string = '', password: string = '') {
+
+        super(id);
+
+        if (EmailException.checkEmail(email)) // Check valid syntaxe email
+            throw new EmailException()
+        if (!PasswordException.isValidPassword(password)) // Check valid syntaxe password
+            throw new PasswordException()
+
+        this.email = email;
+        this.password = password;
+        this.personne_idpersonne = this.id;
     }
 
-    save(): Promise < number > {
-        console.log("Client");
-        return new Promise((resolve, reject) => {
-            MySQL.insert('client', this).then((id: number) => {
-                console.log('Save Client');
-            })
-        })
-    };
+    /************************* GETTER *************************/
 
-    pk(type: 0 | 1 = 0): string | number {
-        return (type) ? 'id' : < number > this.id;
-    };
-
-    static attribut(): Array < string > {
+    get attributInsert(): Array < string > {
         return ['personne_idpersonne', 'email', 'password']
     };
 
-    static selectAttribut(): Array < string > {
-        return ['personne_idpersonne', 'email'];
+    /************************* STATIC METHOD *************************/
+
+    static select(where: any) {
+        return new Promise((resolve, reject) => {
+            const join: Array < jointureInterface > = [{
+                type: 'LEFT',
+                table: 'personne',
+                where: {
+                    table: 'client',
+                    foreignKey: 'personne_idpersonne'
+                }
+            }, {
+                type: 'LEFT',
+                table: 'pays',
+                where: {
+                    table: 'personne',
+                    foreignKey: 'pays_idPays'
+                }
+            }, ]
+            MySQL.selectJoin('client', join, where).then((arrayPersonne: Array < any > ) => {
+                    // let data: Array < Personne > = [];
+                    // for (const personne of arrayPersonne) {
+                    //     personne.dateNaiss = new String(personne.dateNaiss)
+                    //     personne.id = personne.idpersonne;
+                    //     data.push(new Personne(personne));
+                    // }
+                    console.log(arrayPersonne);
+                    resolve(arrayPersonne)
+                })
+                .catch((err: any) => {
+                    console.log(err);
+                    reject(false)
+                });
+        })
     }
 
 }
