@@ -1,13 +1,10 @@
-import { PaysInterfaces } from './Pays';
 export interface PersonneInterfaces {
-    id ? : number | null;
-    nom: string | null;
-    prenom: string | null;
-    dateNaiss: string | null;
+    idpersonne: number;
+    nom: string;
+    prenom: string;
+    dateNaiss: any;
     adresse ? : string;
     ville ? : string;
     zipcode ? : string;
-    pays_idPays: string | number;
-
-    save(): Promise < number >
+    pays_idPays: number;
 }

@@ -1,4 +1,5 @@
-export default class Pays {
+
+export default class Pays{
 
     private nom: string | null;
     private idPays: number;

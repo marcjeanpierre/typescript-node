@@ -1,17 +1,14 @@
+import MySQL from '../db/MySQL';
 import Personne from './Personne';
 
 import EmailException from '../exception/EmailException';
 import PasswordException from '../exception/PasswordException';
-import { ClientInterfaces } from '../interfaces/Client';
-import MySQL from '../db/MySQL';
-import Pays from './Pays';
-import { PaysInterfaces } from '../interfaces/Pays';
 
 export default class Client extends Personne {
 
-    personne_idpersonne: number | null | undefined;
     email: string;
     password: string = '';
+    personne_idpersonne: number | null | undefined;
 
     constructor(id: number | Personne, email: string = '', password: string = '') {
         super(id);
@@ -25,8 +22,8 @@ export default class Client extends Personne {
         // });
         this.password = password;
 
-        const personne = < Personne > id;
-        this.personne_idpersonne = < number > personne.pk();
+        // const personne = < Personne > id;
+        // this.personne_idpersonne = < number > personne.pk();
     }
 
     save(): Promise < number > {
@@ -42,11 +39,11 @@ export default class Client extends Personne {
         return (type) ? 'id' : < number > this.id;
     };
 
-    get attribut(): Array < string > {
+    static attribut(): Array < string > {
         return ['personne_idpersonne', 'email', 'password']
-    }
+    };
 
-    get select(): Array < string > {
+    static selectAttribut(): Array < string > {
         return ['personne_idpersonne', 'email'];
     }
 
