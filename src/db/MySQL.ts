@@ -82,7 +82,7 @@ export default abstract class MySQL {
      * @returns {*}
      * @memberof MySQL
      */
-    static select(table: 'client' | 'personne', where ? : any): any {
+    static select(table: listeTables, where ? : any): any {
         return new Promise((resolve, reject) => { // return Promise because the processing time of the database | The only way to get an answer is the "resolve()" or "reject()"
             const bdd: Connection = createConnection({ // Init params to database
                 host: process.env.DB_HOST,

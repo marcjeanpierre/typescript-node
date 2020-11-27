@@ -52,15 +52,31 @@ export default class Client extends Personne {
                     foreignKey: 'pays_idPays'
                 }
             }, ]
-            MySQL.selectJoin('client', join, where).then((arrayPersonne: Array < any > ) => {
-                    // let data: Array < Personne > = [];
-                    // for (const personne of arrayPersonne) {
-                    //     personne.dateNaiss = new String(personne.dateNaiss)
-                    //     personne.id = personne.idpersonne;
-                    //     data.push(new Personne(personne));
-                    // }
-                    console.log(arrayPersonne);
-                    resolve(arrayPersonne)
+            MySQL.selectJoin('client', join, where).then((arrayClient: Array < any > ) => {
+                    let newPersonne: Personne;
+                    let data: Array < Client > = [];
+                    for (const personne of arrayClient) {
+                        personne.dateNaiss = new String(personne.dateNaiss)
+                        personne.id = personne.idpersonne;
+                        newPersonne = new Personne(personne);
+                        data.push(new Client(newPersonne, personne.email, personne.password));
+                    }
+                    console.log(data);
+                    resolve(data)
+                })
+                .catch((err: any) => {
+                    console.log(err);
+                    reject(false)
+                });
+        })
+    }
+
+
+
+    static isExiste(email: string) {
+        return new Promise((resolve, reject) => {
+            MySQL.select('client', { email: email }).then((arrayClient: Array < any > ) => {
+                    resolve((arrayClient.length > 0))
                 })
                 .catch((err: any) => {
                     console.log(err);
